@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const boom = require('boom');
 
 const asyncMiddleware = require('../middleware/asyncMiddleware');
+const { createUser } = require('../queries/users');
 
 const UsersRouter = express.Router();
 
@@ -40,10 +41,9 @@ UsersRouter.post('/', asyncMiddleware(async (req, res) => {
   newUser = Object.assign({}, newUser, { password: hashedPassword });
 
   try {
-    console.log(newUser);
-    // await createUser(newUser);
+    await createUser(newUser);
 
-    // delete newUser.password;
+    delete newUser.password;
     return res.status(201).send(newUser);
   } catch (e) {
     throw boom.badImplementation('DB error', e);

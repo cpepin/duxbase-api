@@ -12,16 +12,18 @@ const Register = () => (
         <Form>
           <FormLayout>
             <TextField
-              name={'email'}
-              id={'email'}
-              label={'Email'}
+              id="registerEmail"
+              field="registerEmail"
+              name="email"
+              label="Email"
             />
 
             <TextField
-              name={'password'}
-              id={'password'}
-              label={'Password'}
-              type={'password'}
+              id="registerPassword"
+              field="registerPassword"
+              name="password"
+              label="Password"
+              type="password"
             />
 
             <Button submit>Submit</Button>

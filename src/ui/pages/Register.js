@@ -1,10 +1,12 @@
 import React from 'react';
-import { Button, Card, Layout, FormLayout } from '@shopify/polaris';
+import { Banner, Button, Card, Layout, FormLayout } from '@shopify/polaris';
 import { Form } from 'informed';
 
 import TextField from '../components/TextField';
 import Main from '../layouts/main';
-import { isEmail } from '../utils/validation';
+import { isEmail, isPassword } from '../utils/validation';
+import usePost from '../hooks/usePost';
+import { user } from '../constants/routes';
 
 const passwordHelpText = (
   <>
@@ -19,36 +21,60 @@ const passwordHelpText = (
   </>
 );
 
-const Register = () => (
-  <Main title="Sign up">
-    <Layout.Section>
-      <Card sectioned>
-        <Form>
-          <FormLayout>
-            <TextField
-              id="registerEmail"
-              field="registerEmail"
-              name="email"
-              label="Email"
-              validate={isEmail}
-              validateOnBlur
-            />
+const Register = () => {
+  const [registerUser, isLoading, _, error] = usePost(user.register);
 
-            <TextField
-              id="registerPassword"
-              field="registerPassword"
-              name="password"
-              label="Password"
-              type="password"
-              helpText={passwordHelpText}
-            />
+  const handleSubmit = (values) => {
+    const payload = {
+      email: values.registerEmail,
+      password: values.registerPassword,
+    };
 
-            <Button submit>Submit</Button>
-          </FormLayout>
-        </Form>
-      </Card>
-    </Layout.Section>
-  </Main>
-);
+    registerUser(payload);
+  };
+
+  return (
+    <Main title="Sign up">
+      {error && (
+        <Layout.Section>
+          <Banner status="critical" title="Registration failed">
+            There was a problem submitting your registration.
+            If this problem persists, please contact support.
+          </Banner>
+        </Layout.Section>
+      )}
+
+      <Layout.Section>
+        <Card sectioned>
+          <Form onSubmit={handleSubmit}>
+            <FormLayout>
+              <TextField
+                id="registerEmail"
+                field="registerEmail"
+                name="email"
+                label="Email"
+                validate={isEmail}
+                validateOnBlur
+              />
+
+              <TextField
+                id="registerPassword"
+                field="registerPassword"
+                name="password"
+                label="Password"
+                type="password"
+                helpText={passwordHelpText}
+                validate={isPassword}
+                validateOnBlur
+              />
+
+              <Button submit loading={isLoading}>Submit</Button>
+            </FormLayout>
+          </Form>
+        </Card>
+      </Layout.Section>
+    </Main>
+  );
+};
 
 export default Register;

@@ -2,9 +2,11 @@ const express = require('express');
 const Joi = require('joi');
 const bcrypt = require('bcrypt');
 const boom = require('boom');
+const jwt = require('jsonwebtoken');
 
 const asyncMiddleware = require('../middleware/asyncMiddleware');
 const { createUser } = require('../queries/users');
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const UsersRouter = express.Router();
 
@@ -44,6 +46,10 @@ UsersRouter.post('/', asyncMiddleware(async (req, res) => {
     await createUser(newUser);
 
     delete newUser.password;
+
+    const accessToken = jwt.sign(newUser, JWT_SECRET, { expiresIn: '1h' });
+    res.cookie('squad-leader-session', accessToken);
+
     return res.status(201).send(newUser);
   } catch (e) {
     throw boom.badImplementation('DB error', e);

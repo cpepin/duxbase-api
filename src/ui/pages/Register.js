@@ -1,9 +1,8 @@
 import React from 'react';
-import { Banner, Button, Card, Layout, FormLayout } from '@shopify/polaris';
+import { Banner, Button, Card, Layout, FormLayout, Page } from '@shopify/polaris';
 import { Form } from 'informed';
 
 import TextField from '../components/TextField';
-import Main from '../layouts/main';
 import { isEmail, isPassword } from '../utils/validation';
 import usePost from '../hooks/usePost';
 import { user } from '../constants/routes';
@@ -34,46 +33,48 @@ const Register = () => {
   };
 
   return (
-    <Main title="Sign up">
-      {error && (
+    <Page title="Sign up">
+      <Layout>
+        {error && (
+          <Layout.Section>
+            <Banner status="critical" title="Registration failed">
+              There was a problem submitting your registration.
+              If this problem persists, please contact support.
+            </Banner>
+          </Layout.Section>
+        )}
+
         <Layout.Section>
-          <Banner status="critical" title="Registration failed">
-            There was a problem submitting your registration.
-            If this problem persists, please contact support.
-          </Banner>
+          <Card sectioned>
+            <Form onSubmit={handleSubmit}>
+              <FormLayout>
+                <TextField
+                  id="registerEmail"
+                  field="registerEmail"
+                  name="email"
+                  label="Email"
+                  validate={isEmail}
+                  validateOnBlur
+                />
+
+                <TextField
+                  id="registerPassword"
+                  field="registerPassword"
+                  name="password"
+                  label="Password"
+                  type="password"
+                  helpText={passwordHelpText}
+                  validate={isPassword}
+                  validateOnBlur
+                />
+
+                <Button submit loading={isLoading}>Submit</Button>
+              </FormLayout>
+            </Form>
+          </Card>
         </Layout.Section>
-      )}
-
-      <Layout.Section>
-        <Card sectioned>
-          <Form onSubmit={handleSubmit}>
-            <FormLayout>
-              <TextField
-                id="registerEmail"
-                field="registerEmail"
-                name="email"
-                label="Email"
-                validate={isEmail}
-                validateOnBlur
-              />
-
-              <TextField
-                id="registerPassword"
-                field="registerPassword"
-                name="password"
-                label="Password"
-                type="password"
-                helpText={passwordHelpText}
-                validate={isPassword}
-                validateOnBlur
-              />
-
-              <Button submit loading={isLoading}>Submit</Button>
-            </FormLayout>
-          </Form>
-        </Card>
-      </Layout.Section>
-    </Main>
+      </Layout>
+    </Page>
   );
 };
 

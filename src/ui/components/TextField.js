@@ -2,7 +2,7 @@ import { TextField as VisualTextField } from '@shopify/polaris';
 import { asField } from 'informed';
 
 const TextField = asField(({ fieldState, fieldApi, ...props }) => {
-  const { value, error } = fieldState;
+  const { error , maskedValue } = fieldState;
   const { setValue, setTouched } = fieldApi;
   const { onChange, onBlur, initialValue, forwardedRef, ...rest } = props;
 
@@ -26,7 +26,7 @@ const TextField = asField(({ fieldState, fieldApi, ...props }) => {
     <VisualTextField
       {...rest}
       ref={forwardedRef}
-      value={!value && value !== 0 ? '' : value}
+      value={maskedValue || initialValue || ''}
       onChange={handleChange}
       onBlur={handleBlur}
       error={error}

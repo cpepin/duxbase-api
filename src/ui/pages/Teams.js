@@ -1,33 +1,39 @@
 import React from 'react';
+import { Layout, Card, ResourceList, TextStyle } from '@shopify/polaris';
 
-import Page from '../layouts/main';
+import Main from '../layouts/main';
+
+const teams = [
+  { id: 0, name: 'Buffalo Wild Wings' },
+  { id: 1, name: 'Heberts Restaurant' },
+];
 
 const Teams = () => (
-  <Page>
-    <h1>
-      Your teams
-    </h1>
+  <Main title="Your teams">
+    <Layout.Section>
+      <Card>
+        <ResourceList
+          resourceName={{singular: 'team', plural: 'teams'}}
+          items={teams}
+          renderItem={(item) => {
+            const { id, name } = item;
 
-    <section>
-      <ul>
-        <li><a href="#">Buffalo Wild Wings</a></li>
-        <li><a href="#">Heberts Restaurant</a></li>
-        <li><a href="#">Add another team</a></li>
-      </ul>
-    </section>
-
-    <style jsx>{`
-      h1 {
-        text-align: center;
-      }
-
-      section {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-    `}</style>
-  </Page>
+            return (
+              <ResourceList.Item
+                id={id}
+                name={name}
+                accessibilityLabel={`View details for ${name}`}
+              >
+                <h3>
+                  <TextStyle variation="strong">{name}</TextStyle>
+                </h3>
+              </ResourceList.Item>
+            );
+          }}
+        />
+      </Card>
+    </Layout.Section>
+  </Main>
 );
 
 export default Teams;

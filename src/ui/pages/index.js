@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Form, FormLayout, TextContainer, TextField, Card, DisplayText, Layout, Button } from '@shopify/polaris';
+import { Form } from 'informed';
+import { FormLayout, TextField, Card, DisplayText, Layout, Button } from '@shopify/polaris';
 
 import Main from '../layouts/main';
 
@@ -18,11 +19,9 @@ const HomePage = () => {
   return (
     <Main title={'Squad leader'}>
       <Layout.Section>
-        <TextContainer>
-          <DisplayText size="small">
-            Manage your recreational sports teams with ease.
-          </DisplayText>
-        </TextContainer>
+        <DisplayText size="small">
+          Manage your recreational sports teams with ease.
+        </DisplayText>
       </Layout.Section>
 
       <Layout.Section>

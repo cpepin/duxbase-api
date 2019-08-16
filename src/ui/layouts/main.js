@@ -3,7 +3,7 @@ import Head from 'next/head';
 import '@shopify/polaris/styles.css';
 import { Page, AppProvider, Layout } from '@shopify/polaris';
 
-const Main = ({ children, title = '' }) => (
+const Main = ({ children, ...rest }) => (
   <>
     <Head>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -11,7 +11,7 @@ const Main = ({ children, title = '' }) => (
     </Head>
 
     <AppProvider>
-      <Page title={title}>
+      <Page {...rest}>
         <Layout>
           {children}
         </Layout>

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, Form, Card, TextField, Layout, FormLayout } from '@shopify/polaris';
+import { Button, Card, TextField, Layout, FormLayout } from '@shopify/polaris';
+import { Form } from 'informed';
 
 import Main from '../layouts/main';
 

@@ -9,7 +9,7 @@ const teams = [
 ];
 
 const Teams = () => (
-  <Main title="Your teams">
+  <Main title="Your teams" primaryAction={{ content: 'Add team' }}>
     <Layout.Section>
       <Card>
         <ResourceList

@@ -1,19 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Form } from 'informed';
-import { FormLayout, TextField, Card, DisplayText, Layout, Button } from '@shopify/polaris';
+import { FormLayout, Card, DisplayText, Layout, Button } from '@shopify/polaris';
 
+import TextField from '../components/TextField';
 import Main from '../layouts/main';
+import { isRequired } from '../utils/validation';
 
 const HomePage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (email && password) {
-      console.log('Submitting...', email, password);
-    }
+  const handleSubmit = (values) => {
+    console.log('Submitting...', values);
   };
 
   return (
@@ -32,16 +27,19 @@ const HomePage = () => {
                 id="email"
                 name="email"
                 label="Email"
-                onChange={setEmail}
-                value={email}
+                field="email"
+                validate={isRequired}
+                validateOnBlur
               />
 
               <TextField
                 id="password"
                 name="password"
                 label="Password"
-                onChange={setPassword}
-                value={password}
+                type="password"
+                field="password"
+                validate={isRequired}
+                validateOnBlur
               />
 
               <Button submit>Login</Button>

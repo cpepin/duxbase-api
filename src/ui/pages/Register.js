@@ -1,7 +1,8 @@
 import React from 'react';
-import { Button, Card, TextField, Layout, FormLayout } from '@shopify/polaris';
+import { Button, Card, Layout, FormLayout } from '@shopify/polaris';
 import { Form } from 'informed';
 
+import TextField from '../components/TextField';
 import Main from '../layouts/main';
 
 const Register = () => (

@@ -29,15 +29,15 @@ App.getInitialProps = async ({ ctx }) => {
     const token = req.cookies['squad-leader-session'];
 
     try {
-      const response = await fetch(auth.me, {
+      const response = await fetch(auth.me(), {
         headers: { 'Authorization': `Bearer ${token}` },
       });
-      response = await response.json();
-      
-      if (response.isBoom) {
+      const responseJson = await response.json();
+  
+      if (responseJson.isBoom) {
         failedPreLoad = true;
       } else {
-        user = response;
+        user = responseJson;
       }
     } catch (e) {
       failedPreLoad = true;

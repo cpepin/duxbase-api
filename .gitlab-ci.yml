@@ -1,0 +1,14 @@
+stages:
+  - deploy
+
+install_deps:
+  image: ruby:latest
+  stage: install_deps
+  when: manual
+  script:
+    - apt-get update -qy
+    - apy-get install -y ruby-dev
+    - gem install dpl
+    - dpl --provider=heroku --app=squad-leader-app --api-key=$HEROKU_API_KEY
+
+

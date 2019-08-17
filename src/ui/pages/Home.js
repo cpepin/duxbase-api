@@ -1,5 +1,6 @@
 import React from 'react';
 import { Layout, Card, ResourceList, TextStyle, Page } from '@shopify/polaris';
+
 import Protected from '../layouts/Protected';
 
 const teams = [

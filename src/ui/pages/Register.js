@@ -7,6 +7,7 @@ import { isEmail, isPassword } from '../utils/validation';
 import usePost from '../hooks/usePost';
 import { user } from '../constants/routes';
 import Public from '../layouts/Public';
+import { useRouter } from 'next/router';
 
 const passwordHelpText = (
   <>
@@ -23,6 +24,14 @@ const passwordHelpText = (
 
 const Register = () => {
   const [registerUser, isLoading, _, error] = usePost(user.register);
+  const router = useRouter();
+
+  const handleLoginClick = e => {
+    e.preventDefault();
+    router.push('/');
+  };
+
+  const action = { content: 'Back to login', onAction: handleLoginClick };
 
   const handleSubmit = (values) => {
     const payload = {
@@ -35,7 +44,7 @@ const Register = () => {
 
   return (
     <Public>
-      <Page title="Sign up">
+      <Page title="Sign up" primaryAction={action}>
         <Layout>
           {error && (
             <Layout.Section>

@@ -14,11 +14,9 @@ const App = ({ Component, pageProps, user, failedPreLoad }) => (
       <meta charSet="utf-8" />
     </Head>
 
-    <AppProvider>
-      <AuthProvider initialUser={user} failedPreLoad={failedPreLoad}>
-        <Component {...pageProps} />
-      </AuthProvider>
-    </AppProvider>
+    <AuthProvider initialUser={user} failedPreLoad={failedPreLoad}>
+      <Component {...pageProps} />
+    </AuthProvider>
   </>
 );
 

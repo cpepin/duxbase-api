@@ -7,6 +7,7 @@ import TextField from '../components/TextField';
 import { isRequired } from '../utils/validation';
 import usePost from '../hooks/usePost';
 import { auth } from '../constants/routes';
+import Public from '../layouts/Public';
 
 const HomePage = () => {
   const [login, isLoading, result, error] = usePost(auth.login);
@@ -35,52 +36,54 @@ const HomePage = () => {
   }, [result]);
 
   return (
-    <Page title={'Squad leader'}>
-      <Layout>
-        <Layout.Section>
-          <DisplayText size="small">
-            Manage your recreational sports teams with ease.
-          </DisplayText>
-        </Layout.Section>
-
-        {error && (
+    <Public>
+      <Page title={'Squad leader'}>
+        <Layout>
           <Layout.Section>
-            <Banner status="critical" title="Login Failed">
-              Incorrect Email/Password combination.
-            </Banner>
+            <DisplayText size="small">
+              Manage your recreational sports teams with ease.
+            </DisplayText>
           </Layout.Section>
-        )}
 
-        <Layout.Section>
-          <Card title="Login" sectioned actions={actions}>
-            <Form onSubmit={handleSubmit}>
-              <FormLayout>
-                <TextField
-                  id="loginEmail"
-                  field="loginEmail"
-                  name="email"
-                  label="Email"
-                  validate={isRequired}
-                  validateOnBlur
-                />
+          {error && (
+            <Layout.Section>
+              <Banner status="critical" title="Login Failed">
+                Incorrect Email/Password combination.
+              </Banner>
+            </Layout.Section>
+          )}
 
-                <TextField
-                  id="loginPassword"
-                  field="loginPassword"
-                  name="password"
-                  label="Password"
-                  type="password"
-                  validate={isRequired}
-                  validateOnBlur
-                />
+          <Layout.Section>
+            <Card title="Login" sectioned actions={actions}>
+              <Form onSubmit={handleSubmit}>
+                <FormLayout>
+                  <TextField
+                    id="loginEmail"
+                    field="loginEmail"
+                    name="email"
+                    label="Email"
+                    validate={isRequired}
+                    validateOnBlur
+                  />
 
-                <Button submit loading={isLoading}>Login</Button>
-              </FormLayout>
-            </Form>
-          </Card>
-        </Layout.Section>
-      </Layout>
-    </Page>
+                  <TextField
+                    id="loginPassword"
+                    field="loginPassword"
+                    name="password"
+                    label="Password"
+                    type="password"
+                    validate={isRequired}
+                    validateOnBlur
+                  />
+
+                  <Button submit loading={isLoading}>Login</Button>
+                </FormLayout>
+              </Form>
+            </Card>
+          </Layout.Section>
+        </Layout>
+      </Page>
+    </Public>
   );
 };
 

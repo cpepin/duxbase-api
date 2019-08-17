@@ -1,9 +1,9 @@
 stages:
   - deploy
 
-install_deps:
+deploy:
   image: ruby:latest
-  stage: install_deps
+  stage: deploy
   when: manual
   script:
     - apt-get update -qy

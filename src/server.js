@@ -1,5 +1,6 @@
 const express = require('express');
 const next = require('next');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 const apiRoutes = require('./api/routes');
@@ -14,6 +15,7 @@ const handle = app.getRequestHandler();
 app.prepare().then(() => {
   const server = express();
 
+  server.use(cookieParser());
   server.use(express.json());
 
   server.use('/api', apiRoutes);

@@ -31,9 +31,9 @@ const HomePage = () => {
     { content: 'Register', onAction: handleRegisterClick },
   ];
 
-  useEffect(() => {
-    console.log(result);
-  }, [result]);
+  // useEffect(() => {
+  //   console.log(result);
+  // }, [result]);
 
   return (
     <Public>

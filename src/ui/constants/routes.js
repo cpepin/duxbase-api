@@ -6,5 +6,6 @@ export const user = {
 
 export const auth = {
   me: BASE_URL ? `${BASE_URL}/api/auth/me` : '/api/auth/me',
+  login: '/api/auth/login',
 };
 

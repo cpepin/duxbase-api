@@ -24,7 +24,7 @@ const App = ({ Component, pageProps, user, failedPreLoad }) => (
 
 App.getInitialProps = async ({ ctx }) => {
   const { req } = ctx;
-  let user = {};
+  let user = undefined;
   let failedPreLoad = false;
 
   if (req) {
@@ -34,7 +34,13 @@ App.getInitialProps = async ({ ctx }) => {
       const response = await fetch(auth.me, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
-      user = await response.json();
+      response = await response.json();
+      
+      if (response.isBoom) {
+        failedPreLoad = true;
+      } else {
+        user = response;
+      }
     } catch (e) {
       failedPreLoad = true;
     }

@@ -1,11 +1,46 @@
 const express = require('express');
 const boom = require('boom');
-const jwt = require('jsonwebtoken');
+const Joi = require('joi');
+const bcrypt = require('bcrypt');
 
+const { findUserByEmail } = require('../queries/users');
+const { getJwt, verifyJwt } = require('../utils/jwt');
+const { cookieName } = require('../constants/jwt');
 const asyncMiddleware = require('../middleware/asyncMiddleware');
-const JWT_SECRET = process.env.JWT_SECRET;
 
 const AuthRouter = express.Router();
+
+AuthRouter.post('/login', asyncMiddleware(async (req, res) => {
+  const schema = {
+    email: Joi.string().required(),
+    password: Joi.string().required()
+  };
+
+  const creds = req.body;
+
+  const { error } = Joi.validate(creds, schema, { abortEarly: false });
+
+  if (error) {
+    throw boom.badRequest(error);
+  }
+
+  const user = await findUserByEmail(creds.email);
+
+  if (user) {
+    const match = await bcrypt.compare(creds.password, user.password);
+
+    if (match) {
+      delete user.password;
+
+      const accessToken = getJwt(user);
+      res.cookie(cookieName, accessToken);
+
+      return res.status(200).send(user);
+    }
+  }
+
+  throw boom.unauthorized();
+}));
 
 AuthRouter.get('/me', asyncMiddleware(async (req, res) => {
   const { authorization } = req.headers;
@@ -14,7 +49,7 @@ AuthRouter.get('/me', asyncMiddleware(async (req, res) => {
     const accessToken = authorization.split(' ')[1];
 
     try {
-      const decoded = await jwt.verify(accessToken, JWT_SECRET);
+      const decoded = await verifyJwt(accessToken);
 
       return res.status(200).send(decoded);
     } catch (error) {

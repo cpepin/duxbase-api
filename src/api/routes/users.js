@@ -2,11 +2,11 @@ const express = require('express');
 const Joi = require('joi');
 const bcrypt = require('bcrypt');
 const boom = require('boom');
-const jwt = require('jsonwebtoken');
 
 const asyncMiddleware = require('../middleware/asyncMiddleware');
 const { createUser } = require('../queries/users');
-const JWT_SECRET = process.env.JWT_SECRET;
+const { cookieName } = require('../constants/jwt');
+const { getJwt } = require('../utils/jwt');
 
 const UsersRouter = express.Router();
 
@@ -42,18 +42,14 @@ UsersRouter.post('/', asyncMiddleware(async (req, res) => {
   const hashedPassword = await bcrypt.hash(newUser.password, 12);
   newUser = Object.assign({}, newUser, { password: hashedPassword });
 
-  try {
-    await createUser(newUser);
+  await createUser(newUser);
 
-    delete newUser.password;
+  delete newUser.password;
 
-    const accessToken = jwt.sign(newUser, JWT_SECRET, { expiresIn: '1h' });
-    res.cookie('squad-leader-session', accessToken);
+  const accessToken = getJwt(newUser);
+  res.cookie(cookieName, accessToken);
 
-    return res.status(201).send(newUser);
-  } catch (e) {
-    throw boom.badImplementation('DB error', e);
-  }
+  return res.status(201).send(newUser);
 }));
 
 module.exports = UsersRouter;

@@ -1,16 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Form } from 'informed';
-import { FormLayout, Card, DisplayText, Layout, Button, Page } from '@shopify/polaris';
+import { FormLayout, Banner, Card, DisplayText, Layout, Button, Page } from '@shopify/polaris';
 
 import TextField from '../components/TextField';
 import { isRequired } from '../utils/validation';
+import usePost from '../hooks/usePost';
+import { auth } from '../constants/routes';
 
 const HomePage = () => {
+  const [login, isLoading, result, error] = usePost(auth.login);
   const router = useRouter();
 
   const handleSubmit = (values) => {
-    console.log('Submitting...', values);
+    const payload = {
+      email: values.loginEmail,
+      password: values.loginPassword,
+    };
+
+    login(payload);
   };
 
   const handleRegisterClick = e => {
@@ -22,6 +30,10 @@ const HomePage = () => {
     { content: 'Register', onAction: handleRegisterClick },
   ];
 
+  useEffect(() => {
+    console.log(result);
+  }, [result]);
+
   return (
     <Page title={'Squad leader'}>
       <Layout>
@@ -30,6 +42,14 @@ const HomePage = () => {
             Manage your recreational sports teams with ease.
           </DisplayText>
         </Layout.Section>
+
+        {error && (
+          <Layout.Section>
+            <Banner status="critical" title="Login Failed">
+              Incorrect Email/Password combination.
+            </Banner>
+          </Layout.Section>
+        )}
 
         <Layout.Section>
           <Card title="Login" sectioned actions={actions}>
@@ -54,7 +74,7 @@ const HomePage = () => {
                   validateOnBlur
                 />
 
-                <Button submit>Login</Button>
+                <Button submit loading={isLoading}>Login</Button>
               </FormLayout>
             </Form>
           </Card>

@@ -63,9 +63,11 @@ const Home = ({
             )}
 
             {!isLoading && teams.length === 0 && (
-              <EmptyState action={{ content: 'Add Team' }} heading={'Manage teams'}>
-                <p>Add and remove teams that you manage.</p>
-              </EmptyState>
+              <Card>
+                <EmptyState action={{ content: 'Add Team' }} heading={'Manage teams'}>
+                  <p>Add and remove teams that you manage.</p>
+                </EmptyState>
+              </Card>
             )}
 
             {!isLoading && loadingTeamsError && (

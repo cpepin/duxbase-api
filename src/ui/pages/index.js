@@ -10,7 +10,7 @@ import { auth } from '../constants/routes';
 import Public from '../layouts/Public';
 import useAuth from '../hooks/useAuth';
 
-const HomePage = () => {
+const Index = () => {
   const { setUser } = useAuth();
   const [login, isLoading, result, error] = usePost(auth.login);
   const router = useRouter();
@@ -36,6 +36,7 @@ const HomePage = () => {
   useEffect(() => {
     if (result) {
       setUser(result);
+      router.push('/home');
     }
   }, [result]);
 
@@ -91,4 +92,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default Index;

@@ -2,7 +2,6 @@ import React from 'react';
 import Head from 'next/head';
 import fetch from 'isomorphic-unfetch';
 import '@shopify/polaris/styles.css';
-import { AppProvider } from '@shopify/polaris';
 
 import AuthProvider from '../providers/AuthProvider';
 import { auth } from '../constants/routes';
@@ -20,8 +19,9 @@ const App = ({ Component, pageProps, user, failedPreLoad }) => (
   </>
 );
 
-App.getInitialProps = async ({ ctx }) => {
+App.getInitialProps = async ({ Component, ctx }) => {
   const { req } = ctx;
+  let pageProps = {};
   let user = undefined;
   let failedPreLoad = false;
 
@@ -44,7 +44,11 @@ App.getInitialProps = async ({ ctx }) => {
     }
   }
 
-  return { user, failedPreLoad };
+  if (Component.getInitialProps) {
+    pageProps = await Component.getInitialProps(ctx);
+  }
+
+  return { user, failedPreLoad, pageProps };
 };
 
 export default App;

@@ -8,8 +8,10 @@ import { isRequired } from '../utils/validation';
 import usePost from '../hooks/usePost';
 import { auth } from '../constants/routes';
 import Public from '../layouts/Public';
+import useAuth from '../hooks/useAuth';
 
 const HomePage = () => {
+  const { setUser } = useAuth();
   const [login, isLoading, result, error] = usePost(auth.login);
   const router = useRouter();
 
@@ -31,9 +33,11 @@ const HomePage = () => {
     { content: 'Register', onAction: handleRegisterClick },
   ];
 
-  // useEffect(() => {
-  //   console.log(result);
-  // }, [result]);
+  useEffect(() => {
+    if (result) {
+      setUser(result);
+    }
+  }, [result]);
 
   return (
     <Public>

@@ -14,7 +14,9 @@ const AuthProvider = ({ children, initialUser, failedPreLoad }) => {
   const needsRetry = !user && !failedPreLoad;
 
   useEffect(() => {
-    setUser(result);
+    if (result) {
+      setUser(result);
+    }
   }, [result]);
 
   useEffect(() => {

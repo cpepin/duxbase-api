@@ -33,7 +33,7 @@ App.getInitialProps = async ({ ctx }) => {
         headers: { 'Authorization': `Bearer ${token}` },
       });
       const responseJson = await response.json();
-  
+
       if (responseJson.isBoom) {
         failedPreLoad = true;
       } else {

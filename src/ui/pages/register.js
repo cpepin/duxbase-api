@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Banner, Button, Card, Layout, FormLayout, Page } from '@shopify/polaris';
 import { Form } from 'informed';
 
@@ -8,6 +8,7 @@ import usePost from '../hooks/usePost';
 import { user } from '../constants/routes';
 import Public from '../layouts/Public';
 import { useRouter } from 'next/router';
+import useAuth from '../hooks/useAuth';
 
 const passwordHelpText = (
   <>
@@ -23,7 +24,8 @@ const passwordHelpText = (
 );
 
 const Register = () => {
-  const [registerUser, isLoading, _, error] = usePost(user.register);
+  const { setUser } = useAuth();
+  const [registerUser, isLoading, result, error] = usePost(user.register);
   const router = useRouter();
 
   const handleLoginClick = e => {
@@ -41,6 +43,13 @@ const Register = () => {
 
     registerUser(payload);
   };
+
+  useEffect(() => {
+    if (result) {
+      setUser(result);
+      router.push('/home');
+    }
+  }, [result]);
 
   return (
     <Public>

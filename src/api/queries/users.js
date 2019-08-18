@@ -1,7 +1,11 @@
 const { executeQuery } = require('../utils/db');
 
 function createUser(user) {
-  return executeQuery(_db => _db.insert(user).into('user'));
+  return executeQuery(_db => 
+    _db
+      .insert(user, ['id', 'email'])
+      .into('user')
+  );
 }
 
 function findUserByEmail(email) {

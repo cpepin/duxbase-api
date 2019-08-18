@@ -42,11 +42,9 @@ UsersRouter.post('/', asyncMiddleware(async (req, res) => {
   const hashedPassword = await bcrypt.hash(newUser.password, 12);
   newUser = Object.assign({}, newUser, { password: hashedPassword });
 
-  await createUser(newUser);
+  const [savedUser] = await createUser(newUser);
 
-  delete newUser.password;
-
-  const accessToken = getJwt(newUser);
+  const accessToken = getJwt(savedUser);
   res.cookie(cookieName, accessToken);
 
   return res.status(201).send(newUser);

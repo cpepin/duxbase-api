@@ -5,6 +5,7 @@ import '@shopify/polaris/styles.css';
 
 import AuthProvider from '../providers/AuthProvider';
 import { auth } from '../constants/routes';
+import { AppProvider } from '@shopify/polaris';
 
 const App = ({ Component, pageProps, user, failedPreLoad }) => (
   <>
@@ -13,9 +14,11 @@ const App = ({ Component, pageProps, user, failedPreLoad }) => (
       <meta charSet="utf-8" />
     </Head>
 
-    <AuthProvider initialUser={user} failedPreLoad={failedPreLoad}>
-      <Component {...pageProps} />
-    </AuthProvider>
+    <AppProvider>
+      <AuthProvider initialUser={user} failedPreLoad={failedPreLoad}>
+        <Component {...pageProps} />
+      </AuthProvider>
+    </AppProvider>
   </>
 );
 

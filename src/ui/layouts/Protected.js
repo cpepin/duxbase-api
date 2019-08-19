@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Frame, AppProvider, TopBar } from '@shopify/polaris';
+import { Frame, TopBar } from '@shopify/polaris';
 import { useRouter } from 'next/router';
 
 import useAuth from '../hooks/useAuth';
@@ -16,11 +16,9 @@ const Protected = ({ children }) => {
   }, []);
 
   return (
-    <AppProvider>
-      <Frame topBar={<TopBar />}>
-        {user ? children : <LoadingSkeleton />}
-      </Frame>
-    </AppProvider>
+    <Frame topBar={<TopBar />}>
+      {user ? children : <LoadingSkeleton />}
+    </Frame>
   );
 };
 

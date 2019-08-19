@@ -9,6 +9,15 @@ function findTeams(params) {
   );
 }
 
+function createTeam(team) {
+  return executeQuery(_db => 
+    _db
+      .insert(team, ['*'])
+      .into('team')
+  );
+}
+
 module.exports = {
   findTeams,
+  createTeam,
 };

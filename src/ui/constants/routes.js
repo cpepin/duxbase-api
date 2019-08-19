@@ -8,5 +8,6 @@ export const auth = {
 };
 
 export const teams = {
-  search: () => process.env.BASE_URL ? `${process.env.BASE_URL}/api/teams` : '/api/teams'
+  search: () => process.env.BASE_URL ? `${process.env.BASE_URL}/api/teams` : '/api/teams',
+  create: '/api/teams',
 };

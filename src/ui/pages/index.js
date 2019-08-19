@@ -44,12 +44,6 @@ const Index = () => {
     <Public>
       <Page title={'Squad leader'}>
         <Layout>
-          <Layout.Section>
-            <DisplayText size="small">
-              Manage your recreational sports teams with ease.
-            </DisplayText>
-          </Layout.Section>
-
           {error && (
             <Layout.Section>
               <Banner status="critical" title="Login Failed">
@@ -81,7 +75,7 @@ const Index = () => {
                     validateOnBlur
                   />
 
-                  <Button submit loading={isLoading}>Login</Button>
+                  <Button submit loading={isLoading} primary>Login</Button>
                 </FormLayout>
               </Form>
             </Card>

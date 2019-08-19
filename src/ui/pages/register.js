@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Banner, Button, Card, Layout, FormLayout, Page } from '@shopify/polaris';
+import { Banner, Button, Card, Layout, FormLayout, Page, ButtonGroup } from '@shopify/polaris';
 import { Form } from 'informed';
 
 import TextField from '../components/TextField';
@@ -33,8 +33,6 @@ const Register = () => {
     router.push('/');
   };
 
-  const action = { content: 'Back to login', onAction: handleLoginClick };
-
   const handleSubmit = (values) => {
     const payload = {
       email: values.registerEmail,
@@ -53,7 +51,7 @@ const Register = () => {
 
   return (
     <Public>
-      <Page title="Sign up" primaryAction={action}>
+      <Page title="Sign up">
         <Layout>
           {error && (
             <Layout.Section>
@@ -98,7 +96,10 @@ const Register = () => {
                     validateOnBlur
                   />
 
-                  <Button submit loading={isLoading}>Submit</Button>
+                  <ButtonGroup>
+                    <Button submit loading={isLoading} primary>Submit</Button>
+                    <Button onClick={handleLoginClick}>Return to login</Button>
+                  </ButtonGroup>
                 </FormLayout>
               </Form>
             </Card>

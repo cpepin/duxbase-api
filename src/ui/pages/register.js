@@ -58,8 +58,18 @@ const Register = () => {
           {error && (
             <Layout.Section>
               <Banner status="critical" title="Registration failed">
-                There was a problem submitting your registration.
-                If this problem persists, please contact support.
+                {error.output && error.output.statusCode === 409 && (
+                  <>
+                    A user with that email address already exists.
+                  </>
+                )}
+
+                {!error.output || error.output.statusCode !== 409 && (
+                  <>
+                    There was a problem submitting your registration.
+                    If this problem persists, please contact support.
+                  </>
+                )}
               </Banner>
             </Layout.Section>
           )}

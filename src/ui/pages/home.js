@@ -71,7 +71,10 @@ const Home = ({
       setTeamCardActions([]);
       setTeamAction();
     } else {
-      formApiRef.current.reset();
+      if (formApiRef.current) {
+        formApiRef.current.reset();
+      }
+
       setTeamCardActions([createTeamAction]);
       setTeamAction(createTeamAction);
     }

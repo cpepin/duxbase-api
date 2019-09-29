@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import fetch from 'isomorphic-unfetch';
 import Cookies from 'js-cookie';
 
 function useFetch(url, options = {}) {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [result, setResult] = useState();
+  const [error, setError] = useState(options.initialError || '');
+  const [result, setResult] = useState(options.initialValue);
 
   const call = async (data) => {
     setIsLoading(true);
@@ -41,7 +41,13 @@ function useFetch(url, options = {}) {
     }
   }
 
+  useEffect(() => {
+    if (options.immediate && !options.initialValue && !options.initialError) {
+      call();
+    }
+  }, []);
+
   return [call, isLoading, result, error];
 }
 
-export default useFetch
+export default useFetch;

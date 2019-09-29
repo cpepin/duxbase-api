@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import fetch from 'isomorphic-unfetch';
 import { Form } from 'informed';
 import { Layout, Card, ResourceList, TextStyle, Page, SkeletonBodyText, EmptyState, Banner, Link, FormLayout, Button, ButtonGroup } from '@shopify/polaris';
@@ -10,32 +10,45 @@ import TextField from '../components/TextField';
 import usePost from '../hooks/usePost';
 import { isRequired } from '../utils/validation';
 
-
-// TODO - This NEEDS to be broken up.
 const Home = ({
-  attemptedTeamPreLoad,
-  teams: teamsProp = [],
-  loadingTeamsError: loadingTeamsErrorProp = '',
+  initialTeams,
+  initialTeamsError,
 }) => {
-  const handleCreateTeam = () => {
+  const [isCreatingTeam, setIsCreatingTeam] = useState(false);
+  const handleCreateTeam = useCallback(() => {
     setIsCreatingTeam(true);
-  };
+  }, [setIsCreatingTeam]);
 
   const createTeamAction = {
     content: 'Create team',
     onAction: handleCreateTeam,
   };
 
-  const [teams, setTeams] = useState(teamsProp);
-  const [loadingTeamsError, setLoadingTeamsError] = useState(loadingTeamsErrorProp);
-  const [isCreatingTeam, setIsCreatingTeam] = useState(false);
+  const [teams, setTeams] = useState(initialTeams || []);
   const [teamCardActions, setTeamCardActions] = useState([createTeamAction]);
   const [emptyTeamAction, setTeamAction] = useState(createTeamAction);
   const formApiRef = useRef();
 
   // async calls
-  const [getTeams, getTeamsIsLoading, getTeamsResult, getTeamsError] = useFetch(teamRoutes.search());
-  const [createTeam, createTeamIsLoading, createTeamResult, createTeamError] = usePost(teamRoutes.create);
+  const [
+    _,
+    isLoadingTeams,
+    getTeamsResult,
+    teamsError
+  ] = useFetch(
+    teamRoutes.search(),
+    {
+      immediate: true,
+      initialValue: initialTeams,
+      initialError: initialTeamsError
+    }
+  );
+  const [
+    createTeam,
+    createTeamIsLoading,
+    createTeamResult,
+    createTeamError
+  ] = usePost(teamRoutes.create);
 
   const handleFormSubmit = values => {
     createTeam({ name: values.teamName });
@@ -46,18 +59,6 @@ const Home = ({
   const setFormApi = formApi => {
     formApiRef.current = formApi;
   };
-
-  useEffect(() => {
-    if (getTeamsError) {
-      setLoadingTeamsError(getTeamsError);
-    }
-  }, [getTeamsError]);
-
-  useEffect(() => {
-    if (getTeamsResult) {
-      setTeams(getTeamsResult);
-    }
-  }, [getTeamsResult])
 
   useEffect(() => {
     if (createTeamResult) {
@@ -81,10 +82,10 @@ const Home = ({
   }, [isCreatingTeam]);
 
   useEffect(() => {
-    if (!attemptedTeamPreLoad) {
-      getTeams();
+    if (getTeamsResult) {
+      setTeams(getTeamsResult);
     }
-  }, []);
+  }, [getTeamsResult]);
 
   return (
     <Protected>
@@ -92,7 +93,7 @@ const Home = ({
         <Layout>
           <Layout.Section>
             <Form onSubmit={handleFormSubmit} getApi={setFormApi}>
-              {!getTeamsIsLoading && teams.length > 0 && (
+              {!isLoadingTeams && teams.length > 0 && (
                 <Card sectioned title="Your teams" load actions={teamCardActions}>
                   {createTeamError && (
                     <Banner
@@ -106,10 +107,7 @@ const Home = ({
                   <ResourceList
                     resourceName={{singular: 'team', plural: 'teams'}}
                     items={teams}
-                    renderItem={(item) => {
-                      const { id, name } = item;
-
-                      return (
+                    renderItem={({ id, name }) => (
                         <ResourceList.Item
                           id={id}
                           name={name}
@@ -119,8 +117,7 @@ const Home = ({
                             <TextStyle variation="strong">{name}</TextStyle>
                           </h3>
                         </ResourceList.Item>
-                      );
-                    }}
+                    )}
                   />
 
                   {isCreatingTeam && (
@@ -145,7 +142,7 @@ const Home = ({
                 </Card>
               )}
 
-              {!getTeamsIsLoading && teams.length === 0 && (
+              {!isLoadingTeams && teams.length === 0 && (
                 <Card sectioned>
                   {!isCreatingTeam && (
                     <EmptyState action={emptyTeamAction} heading={'Manage teams'}>
@@ -175,7 +172,7 @@ const Home = ({
                 </Card>
               )}
 
-              {!getTeamsIsLoading && loadingTeamsError && (
+              {!isLoadingTeams && teamsError && (
                 <Banner
                   status="critical"
                   title="There was an issue loading your teams"
@@ -184,7 +181,7 @@ const Home = ({
                 </Banner>
               )}
 
-              {getTeamsIsLoading && <SkeletonBodyText />}
+              {isLoadingTeams && <SkeletonBodyText />}
             </Form>
           </Layout.Section>
         </Layout>
@@ -194,9 +191,8 @@ const Home = ({
 };
 
 Home.getInitialProps = async ({ req }) => {
-  let teams = [];
-  let loadingTeamsError = '';
-  let attemptedTeamPreLoad = false;
+  let initialTeams = [];
+  let initialTeamsError = '';
 
   if (req) {
     try {
@@ -208,18 +204,16 @@ Home.getInitialProps = async ({ req }) => {
       const responseJson = await response.json();
   
       if (responseJson.isBoom) {
-        loadingTeamsError = responseJson;
+        initialTeamsError = responseJson;
       } else {
-        teams = responseJson;
+        initialTeams = responseJson;
       }
     } catch (e) {
-      loadingTeamsError = e;
-    } finally {
-      attemptedTeamPreLoad = true;
+      initialTeamsError = e;
     }
   }
 
-  return { teams, loadingTeamsError, attemptedTeamPreLoad };
+  return { initialTeams, initialTeamsError };
 };
 
 export default Home;

@@ -7,7 +7,7 @@ import AuthProvider from '../providers/AuthProvider';
 import { auth } from '../constants/routes';
 import { AppProvider } from '@shopify/polaris';
 
-const App = ({ Component, pageProps, user, failedPreLoad }) => (
+const App = ({ Component, pageProps, user, userError }) => (
   <>
     <Head>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -15,7 +15,7 @@ const App = ({ Component, pageProps, user, failedPreLoad }) => (
     </Head>
 
     <AppProvider>
-      <AuthProvider initialUser={user} failedPreLoad={failedPreLoad}>
+      <AuthProvider initialUser={user} initialError={userError}>
         <Component {...pageProps} />
       </AuthProvider>
     </AppProvider>
@@ -26,7 +26,7 @@ App.getInitialProps = async ({ Component, ctx }) => {
   const { req } = ctx;
   let pageProps = {};
   let user = undefined;
-  let failedPreLoad = false;
+  let userError = '';
 
   if (req) {
     const token = req.cookies['squad-leader-session'];
@@ -38,12 +38,12 @@ App.getInitialProps = async ({ Component, ctx }) => {
       const responseJson = await response.json();
 
       if (responseJson.isBoom) {
-        failedPreLoad = true;
+        userError = responseJson;
       } else {
         user = responseJson;
       }
     } catch (e) {
-      failedPreLoad = true;
+      userError = e;
     }
   }
 
@@ -51,7 +51,7 @@ App.getInitialProps = async ({ Component, ctx }) => {
     pageProps = await Component.getInitialProps(ctx);
   }
 
-  return { user, failedPreLoad, pageProps };
+  return { user, userError, pageProps };
 };
 
 export default App;

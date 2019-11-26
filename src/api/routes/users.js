@@ -1,12 +1,11 @@
-const express = require('express');
-const Joi = require('joi');
-const bcrypt = require('bcrypt');
-const boom = require('boom');
+const express = require("express");
+const Joi = require("joi");
+const bcrypt = require("bcrypt");
+const boom = require("boom");
 
-const asyncMiddleware = require('../middleware/asyncMiddleware');
-const { createUser } = require('../queries/users');
-const { cookieName } = require('../constants/jwt');
-const { getJwt } = require('../utils/jwt');
+const asyncMiddleware = require("../middleware/asyncMiddleware");
+const { createUser } = require("../queries/users");
+const { getJwt } = require("../utils/jwt");
 
 const UsersRouter = express.Router();
 
@@ -21,34 +20,33 @@ const UsersRouter = express.Router();
  */
 const PASSWORD_REGEX = /^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}$/;
 
-UsersRouter.post('/', asyncMiddleware(async (req, res) => {
-  const schema = {
-    email: Joi.string()
-      .email({ minDomainAtoms: 2 })
-      .required(),
-    password: Joi.string()
-      .regex(PASSWORD_REGEX)
-      .required()
-  };
+UsersRouter.post(
+  "/",
+  asyncMiddleware(async (req, res) => {
+    const schema = {
+      email: Joi.string()
+        .email({ minDomainAtoms: 2 })
+        .required(),
+      password: Joi.string()
+        .regex(PASSWORD_REGEX)
+        .required()
+    };
 
-  let newUser = req.body;
+    let newUser = req.body;
 
-  const { error } = Joi.validate(newUser, schema, { abortEarly: false });
+    const { error } = Joi.validate(newUser, schema, { abortEarly: false });
 
-  if (error) {
-    throw boom.badRequest('Invalid user registration request', error);
-  }
+    if (error) {
+      throw boom.badRequest("Invalid user registration request", error);
+    }
 
-  const hashedPassword = await bcrypt.hash(newUser.password, 12);
-  newUser = Object.assign({}, newUser, { password: hashedPassword });
+    const hashedPassword = await bcrypt.hash(newUser.password, 12);
+    newUser = Object.assign({}, newUser, { password: hashedPassword });
 
-  const [savedUser] = await createUser(newUser);
+    const [savedUser] = await createUser(newUser);
 
-  const accessToken = getJwt(savedUser);
-  res.cookie(cookieName, accessToken);
-
-  return res.status(201).send(newUser);
-}));
+    return res.status(201).send({ jwt: getJwt(savedUser) });
+  })
+);
 
 module.exports = UsersRouter;
-

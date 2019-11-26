@@ -1,4 +1,3 @@
-const expiresIn = '1h';
-const cookieName = 'squad-leader-session';
+const expiresIn = "1h";
 
-module.exports = { expiresIn, cookieName };
+module.exports = { expiresIn };

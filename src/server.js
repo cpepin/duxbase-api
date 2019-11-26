@@ -10,13 +10,7 @@ const port = parseInt(process.env.PORT, 10) || 3000;
 
 const server = express();
 
-var corsOptions = {
-  origin: "http://localhost:8080",
-  optionsSuccessStatus: 200,
-  credentials: true
-};
-
-server.use(cors(corsOptions));
+server.use(cors());
 server.use(cookieParser());
 server.use(express.json());
 

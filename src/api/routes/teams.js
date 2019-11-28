@@ -6,6 +6,7 @@ const {
   createTeam,
   findMemberAndManagedTeamsForUser
 } = require("../queries/teams");
+const { createPlayerTeamRelationship } = require("../queries/playerTeam");
 const authenticated = require("../middleware/authenticated");
 const asyncMiddleware = require("../middleware/asyncMiddleware");
 
@@ -26,7 +27,8 @@ TeamsRouter.post(
   authenticated,
   asyncMiddleware(async (req, res) => {
     const schema = {
-      name: Joi.string().required()
+      name: Joi.string().required(),
+      player: Joi.bool()
     };
 
     let newTeam = req.body;
@@ -38,9 +40,15 @@ TeamsRouter.post(
     }
 
     const [savedTeam] = await createTeam({
-      ...newTeam,
-      ["user_id"]: req.user.id
+      name: newTeam.name,
+      ["manager_id"]: req.user.id
     });
+
+    // Create pivot entry if user is a player-manager
+    if (newTeam.player) {
+      await createPlayerTeamRelationship(req.user.id, savedTeam.id);
+    }
+
     return res.status(201).send(savedTeam);
   })
 );

@@ -45,7 +45,10 @@ UsersRouter.post(
 
     const [savedUser] = await createUser(newUser);
 
-    return res.status(201).send({ jwt: getAccessToken(savedUser) });
+    return res.status(201).send({
+      accessToken: getAccessToken(savedUser),
+      refreshToken: getRefreshToken(savedUser),
+    });
   })
 );
 

@@ -4,8 +4,13 @@ const Joi = require("joi");
 const bcrypt = require("bcrypt");
 
 const { findUserByEmail } = require("../queries/users");
-const { getJwt, verifyJwt } = require("../utils/jwt");
+const {
+  getAccessToken,
+  getRefreshToken,
+  verifyToken
+} = require("../utils/jwt");
 const asyncMiddleware = require("../middleware/asyncMiddleware");
+const authenticated = require("../middleware/authenticated");
 
 const AuthRouter = express.Router();
 
@@ -33,7 +38,10 @@ AuthRouter.post(
       if (match) {
         delete user.password;
 
-        return res.status(200).send({ jwt: getJwt(user) });
+        return res.status(200).send({
+          jwt: getAccessToken(user),
+          refreshToken: getRefreshToken(user),
+        });
       }
     }
 
@@ -41,25 +49,34 @@ AuthRouter.post(
   })
 );
 
+AuthRouter.post('/token', asyncMiddleware(async (req, res) => {
+  const schema = {
+    refreshToken: Joi.string().required(),
+  };
+
+  const { error } = Joi.validate(req.body, schema, { abortEarly: false });
+
+  if (error) {
+    throw boom.badRequest(error);
+  }
+
+  try {
+    const user = await verifyToken(req.body.refreshToken);
+
+    return res.status(200).send({
+      jwt: getAccessToken(user),
+    });
+  } catch (e) {
+    throw boom.unauthorized('Invalid refresh token.');
+  }
+}));
+
 AuthRouter.get(
   "/me",
-  asyncMiddleware(async (req, res) => {
-    const { authorization } = req.headers;
-
-    if (authorization && authorization.split(" ")[0] === "Bearer") {
-      const accessToken = authorization.split(" ")[1];
-
-      try {
-        const decoded = await verifyJwt(accessToken);
-
-        return res.status(200).send(decoded);
-      } catch (error) {
-        throw boom.unauthorized(error);
-      }
-    } else {
-      throw boom.unauthorized("User is not authenticated");
-    }
-  })
+  authenticated,
+  (req, res) => {
+    return res.status(200).send(req.user);
+  }
 );
 
 module.exports = AuthRouter;

@@ -1,3 +1,3 @@
-const expiresIn = "1h";
+const expiresInAccessToken = "1h";
 
-module.exports = { expiresIn };
+module.exports = { expiresInAccessToken };

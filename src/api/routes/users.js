@@ -5,7 +5,7 @@ const boom = require("boom");
 
 const asyncMiddleware = require("../middleware/asyncMiddleware");
 const { createUser } = require("../queries/users");
-const { getJwt } = require("../utils/jwt");
+const { getAccessToken } = require("../utils/jwt");
 
 const UsersRouter = express.Router();
 
@@ -45,7 +45,7 @@ UsersRouter.post(
 
     const [savedUser] = await createUser(newUser);
 
-    return res.status(201).send({ jwt: getJwt(savedUser) });
+    return res.status(201).send({ jwt: getAccessToken(savedUser) });
   })
 );
 

@@ -39,7 +39,7 @@ AuthRouter.post(
         delete user.password;
 
         return res.status(200).send({
-          jwt: getAccessToken(user),
+          accessToken: getAccessToken(user),
           refreshToken: getRefreshToken(user),
         });
       }

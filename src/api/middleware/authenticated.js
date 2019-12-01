@@ -21,6 +21,13 @@ const authenticated = asyncMiddleware(async (req, res, next) => {
 
       req.user = user;
     } catch (e) {
+      let error = 'User is not authorized.';
+
+      if (e.name === 'TokenExpiredError') {
+        error = e.message;
+        res.header('WWW-Authenticate', `Bearer error=${e.name} error_description=${error}`);
+      }
+
       throw boom.unauthorized('User is not authorized.');
     }
   } else {

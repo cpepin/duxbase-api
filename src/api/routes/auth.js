@@ -7,7 +7,7 @@ const { findUserByEmail } = require("../queries/users");
 const {
   getAccessToken,
   getRefreshToken,
-  verifyToken
+  verifyRefreshToken
 } = require("../utils/jwt");
 const asyncMiddleware = require("../middleware/asyncMiddleware");
 const authenticated = require("../middleware/authenticated");
@@ -61,7 +61,7 @@ AuthRouter.post('/token', asyncMiddleware(async (req, res) => {
   }
 
   try {
-    const user = await verifyToken(req.body.refreshToken);
+    const user = await verifyRefreshToken(req.body.refreshToken);
 
     return res.status(200).send({
       jwt: getAccessToken(user),

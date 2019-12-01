@@ -1,14 +1,20 @@
 const jwt = require('jsonwebtoken');
 
 const { expiresInAccessToken } = require('../constants/jwt');
-const JWT_SECRET = process.env.JWT_SECRET;
+const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
+const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
-const getAccessToken = data => jwt.sign(data, JWT_SECRET, {
+const getAccessToken = data => jwt.sign(data, ACCESS_TOKEN_SECRET, {
   expiresIn: expiresInAccessToken
 });
+const verifyAccessToken = token => jwt.verify(token, ACCESS_TOKEN_SECRET);
 
-const getRefreshToken = data => jwt.sign(data, JWT_SECRET);
+const getRefreshToken = data => jwt.sign(data, REFRESH_TOKEN_SECRET);
+const verifyRefreshToken = token => jwt.verify(token, REFRESH_TOKEN_SECRET);
 
-const verifyToken = token => jwt.verify(token, JWT_SECRET);
-
-module.exports = { getAccessToken, getRefreshToken, verifyToken };
+module.exports = {
+  getAccessToken,
+  getRefreshToken,
+  verifyAccessToken,
+  verifyRefreshToken,
+};

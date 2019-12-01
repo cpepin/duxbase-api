@@ -10,12 +10,17 @@ const authenticated = asyncMiddleware(async (req, res, next) => {
     const accessToken = authorization.split(' ')[1];
 
     try {
-      const user = await verifyAccessToken(accessToken);
+      let user = await verifyAccessToken(accessToken);
 
       // if the user has provided a refresh token, attempt to
       // generate a new access token
       if (refreshToken) {
         await verifyRefreshToken(refreshToken);
+
+        // remove old issued and expired timestamps
+        delete user.iat;
+        delete user.exp;
+
         res.header('x-access-token', getAccessToken(user));
       }
 
@@ -25,10 +30,9 @@ const authenticated = asyncMiddleware(async (req, res, next) => {
 
       if (e.name === 'TokenExpiredError') {
         error = e.message;
-        res.header('WWW-Authenticate', `Bearer error=${e.name} error_description=${error}`);
       }
 
-      throw boom.unauthorized('User is not authorized.');
+      throw boom.unauthorized(error);
     }
   } else {
     throw boom.unauthorized('User is unauthenticated.');

@@ -63,8 +63,12 @@ AuthRouter.post('/token', asyncMiddleware(async (req, res) => {
   try {
     const user = await verifyRefreshToken(req.body.refreshToken);
 
+    // remove old issued and expired timestamps
+    delete user.iat;
+    delete user.exp;
+
     return res.status(200).send({
-      jwt: getAccessToken(user),
+      accessToken: getAccessToken(user),
     });
   } catch (e) {
     throw boom.unauthorized('Invalid refresh token.');

@@ -9,6 +9,7 @@ const {
 const { createPlayerTeamRelationship } = require("../queries/playerTeam");
 const authenticated = require("../middleware/authenticated");
 const asyncMiddleware = require("../middleware/asyncMiddleware");
+const authorizedForTeam = require("../middleware/authorizedForTeam");
 
 const TeamsRouter = express.Router();
 
@@ -18,7 +19,16 @@ TeamsRouter.get(
   asyncMiddleware(async (req, res) => {
     const teams = await findMemberAndManagedTeamsForUser(req.user.id);
 
-    res.status(200).send(teams);
+    return res.status(200).send(teams);
+  })
+);
+
+TeamsRouter.get(
+  "/:teamId",
+  authenticated,
+  authorizedForTeam,
+  asyncMiddleware(async (req, res) => {
+    return res.status(200).send(req.team);
   })
 );
 

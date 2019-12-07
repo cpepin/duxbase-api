@@ -11,7 +11,8 @@ function findMemberAndManagedTeamsForUser(userId) {
           .select("team.*")
           .from("team")
           .leftJoin("player_team", "team.id", "player_team.team_id")
-          .where({ ["player_id"]: userId })
+          .leftJoin("player", "player_team.player_id", "player.id")
+          .where({ ["user_id"]: userId })
       ])
   );
 }

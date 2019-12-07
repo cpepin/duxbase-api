@@ -16,7 +16,12 @@ function insertPlayerForUserId(userId) {
   );
 }
 
+function insertPlayer(player) {
+  return executeQuery(_db => _db.insert(player, ["*"]).into("player"));
+}
+
 module.exports = {
   findPlayerByUserId,
-  insertPlayerForUserId
+  insertPlayerForUserId,
+  insertPlayer
 };

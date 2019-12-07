@@ -1,17 +1,19 @@
-const express = require('express');
+const express = require("express");
 
-const UsersRouter = require('./users');
-const AuthRouter = require('./auth');
-const TeamsRouter = require('./teams');
+const UsersRouter = require("./users");
+const AuthRouter = require("./auth");
+const TeamsRouter = require("./teams");
+const UIRouter = require("./ui");
 
 const indexRouter = express.Router();
 
-indexRouter.get('/', (req, res) => {
-  res.send('Hello World');
+indexRouter.get("/", (req, res) => {
+  res.send("Hello World");
 });
 
-indexRouter.use('/users', UsersRouter);
-indexRouter.use('/auth', AuthRouter);
-indexRouter.use('/teams', TeamsRouter);
+indexRouter.use("/users", UsersRouter);
+indexRouter.use("/auth", AuthRouter);
+indexRouter.use("/teams", TeamsRouter);
+indexRouter.use("/ui", UIRouter);
 
 module.exports = indexRouter;

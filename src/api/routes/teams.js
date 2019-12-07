@@ -6,6 +6,10 @@ const {
   createTeam,
   findMemberAndManagedTeamsForUser
 } = require("../queries/teams");
+const {
+  findPlayerByUserId,
+  insertPlayerForUserId
+} = require("../queries/player");
 const { createPlayerTeamRelationship } = require("../queries/playerTeam");
 const authenticated = require("../middleware/authenticated");
 const asyncMiddleware = require("../middleware/asyncMiddleware");
@@ -56,7 +60,13 @@ TeamsRouter.post(
 
     // Create pivot entry if user is a player-manager
     if (newTeam.player) {
-      await createPlayerTeamRelationship(req.user.id, savedTeam.id);
+      let player = await findPlayerByUserId(req.user.id);
+
+      if (!player) {
+        player = await insertPlayerForUserId(req.user.id);
+      }
+
+      await createPlayerTeamRelationship(player.id, savedTeam.id);
     }
 
     return res.status(201).send(savedTeam);

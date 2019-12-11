@@ -20,8 +20,20 @@ function insertPlayer(player) {
   return executeQuery(_db => _db.insert(player, ["*"]).into("player"));
 }
 
+function findPlayersByTeamId(teamId) {
+  return executeQuery(_db =>
+    _db
+      .select("player.*")
+      .from("player")
+      .leftJoin("player_team", "player.id", "player_team.player_id")
+      .leftOuterJoin("user", "player.user_id", "user.id")
+      .where({ "player_team.team_id": teamId })
+  );
+}
+
 module.exports = {
   findPlayerByUserId,
   insertPlayerForUserId,
-  insertPlayer
+  insertPlayer,
+  findPlayersByTeamId
 };

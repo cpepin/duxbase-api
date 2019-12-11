@@ -8,7 +8,9 @@ const {
 } = require("../queries/teams");
 const {
   findPlayerByUserId,
-  insertPlayerForUserId
+  insertPlayerForUserId,
+  insertPlayer,
+  findPlayersByTeamId
 } = require("../queries/player");
 const { createPlayerTeamRelationship } = require("../queries/playerTeam");
 const authenticated = require("../middleware/authenticated");
@@ -33,6 +35,43 @@ TeamsRouter.get(
   authorizedForTeam,
   asyncMiddleware(async (req, res) => {
     return res.status(200).send(req.team);
+  })
+);
+
+TeamsRouter.get(
+  "/:teamId/players",
+  authenticated,
+  authorizedForTeam,
+  asyncMiddleware(async (req, res) => {
+    const players = await findPlayersByTeamId(req.team.id);
+
+    return res.status(200).send(players);
+  })
+);
+
+TeamsRouter.post(
+  "/:teamId/players",
+  authenticated,
+  authorizedForTeam,
+  asyncMiddleware(async (req, res) => {
+    const schema = {
+      firstName: Joi.string().required(),
+      lastName: Joi.string().required(),
+      email: Joi.string().required()
+    };
+
+    let newPlayer = req.body;
+
+    const { error } = Joi.validate(newPlayer, schema, { abortEarly: false });
+
+    if (error) {
+      throw boom.badRequest("Invalid player", error);
+    }
+
+    const [savedPlayer] = await insertPlayer(newPlayer);
+    await createPlayerTeamRelationship(savedPlayer.id, req.team.id);
+
+    return res.status(201).send(savedPlayer);
   })
 );
 

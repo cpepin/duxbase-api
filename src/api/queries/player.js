@@ -34,7 +34,8 @@ function findPlayersByTeamId(teamId) {
           "player.lastName",
           "user.lastName"
         ]),
-        _db.raw(`COALESCE(??, ??) AS "email"`, ["player.email", "user.email"])
+        _db.raw(`COALESCE(??, ??) AS "email"`, ["player.email", "user.email"]),
+        "player.id"
       ])
       .from("player")
       .leftJoin("player_team", "player.id", "player_team.player_id")

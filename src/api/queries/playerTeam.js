@@ -6,4 +6,12 @@ function createPlayerTeamRelationship(player_id, team_id) {
   );
 }
 
-module.exports = { createPlayerTeamRelationship };
+function deletePlayerTeamRelationship(player_id, team_id) {
+  return executeQuery(_db =>
+    _db("player_team")
+      .where({ player_id: player_id, team_id: team_id })
+      .del()
+  );
+}
+
+module.exports = { createPlayerTeamRelationship, deletePlayerTeamRelationship };

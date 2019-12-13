@@ -12,7 +12,10 @@ const {
   insertPlayer,
   findPlayersByTeamId
 } = require("../queries/player");
-const { createPlayerTeamRelationship } = require("../queries/playerTeam");
+const {
+  createPlayerTeamRelationship,
+  deletePlayerTeamRelationship
+} = require("../queries/playerTeam");
 const authenticated = require("../middleware/authenticated");
 const asyncMiddleware = require("../middleware/asyncMiddleware");
 const authorizedForTeam = require("../middleware/authorizedForTeam");
@@ -72,6 +75,18 @@ TeamsRouter.post(
     await createPlayerTeamRelationship(savedPlayer.id, req.team.id);
 
     return res.status(201).send(savedPlayer);
+  })
+);
+
+TeamsRouter.delete(
+  "/:teamId/players/:playerId",
+  authenticated,
+  authorizedForTeam,
+  asyncMiddleware(async (req, res) => {
+    const { playerId, teamId } = req.params;
+
+    await deletePlayerTeamRelationship(playerId, teamId);
+    return res.sendStatus(204);
   })
 );
 

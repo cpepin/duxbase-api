@@ -44,9 +44,19 @@ function findPlayersByTeamId(teamId) {
   );
 }
 
+function deleteUnregisteredPlayerByPlayerId(playerId) {
+  return executeQuery(_db =>
+    _db("player")
+      .where({ id: playerId })
+      .whereNull("user_id")
+      .del()
+  );
+}
+
 module.exports = {
   findPlayerByUserId,
   insertPlayerForUserId,
   insertPlayer,
-  findPlayersByTeamId
+  findPlayersByTeamId,
+  deleteUnregisteredPlayerByPlayerId
 };

@@ -10,7 +10,8 @@ const {
   findPlayerByUserId,
   insertPlayerForUserId,
   insertPlayer,
-  findPlayersByTeamId
+  findPlayersByTeamId,
+  deleteUnregisteredPlayerByPlayerId
 } = require("../queries/player");
 const {
   createPlayerTeamRelationship,
@@ -86,6 +87,10 @@ TeamsRouter.delete(
     const { playerId, teamId } = req.params;
 
     await deletePlayerTeamRelationship(playerId, teamId);
+
+    // delete the player id if said player hasn't yet registered
+    await deleteUnregisteredPlayerByPlayerId(playerId);
+
     return res.sendStatus(204);
   })
 );

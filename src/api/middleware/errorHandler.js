@@ -1,5 +1,4 @@
 const errorHandler = (err, req, res, next) => {
-  console.log(err);
   if (err.isServer) {
     console.error(err);
   }

@@ -6,7 +6,6 @@ async function executeQuery(callback) {
   try {
     return await callback(db);
   } catch (e) {
-    console.log(e);
     if (e.constraint && e.constraint.indexOf("unique") !== -1) {
       throw boom.conflict(e.detail);
     }

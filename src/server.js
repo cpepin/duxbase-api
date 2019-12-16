@@ -1,12 +1,7 @@
 const express = require("express");
-const app = express();
-const httpServer = require("http").Server(app);
-const httpsServer = require("https").Server(app);
-const httpIo = require("socket.io")(httpServer);
-const httpsIo = require("socket.io")(httpsServer);
-
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const socketIo = require("socket.io");
 require("dotenv").config();
 
 const apiRoutes = require("./api/routes");
@@ -14,8 +9,9 @@ const apiRoutes = require("./api/routes");
 const errorHandler = require("./api/middleware/errorHandler");
 const forceSSL = require("./api/middleware/forceSSL");
 
-const httpPort = parseInt(process.env.PORT, 10) || 3000;
-const httpsPort = 443;
+const port = parseInt(process.env.PORT, 10) || 3000;
+
+const app = express();
 
 app.use(cors());
 app.use(forceSSL);
@@ -26,12 +22,9 @@ app.use("/", apiRoutes);
 
 app.use(errorHandler);
 
-httpServer.listen(httpPort, err => {
+const server = app.listen(port, err => {
   if (err) throw err;
-  console.log(`> HTTP Ready on port ${httpPort}`);
+  console.log(`> Ready on http://localhost:${port}`);
 });
 
-httpsServer.listen(httpsPort, err => {
-  if (err) throw err;
-  console.log(`> HTTPS Ready on port ${httpsPort}`);
-});
+const io = socketIo(server);

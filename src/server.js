@@ -1,4 +1,8 @@
 const express = require("express");
+const app = express();
+const server = require("http").Server(app);
+const io = require("socket.io")(server);
+
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require("dotenv").config();
@@ -10,16 +14,14 @@ const forceSSL = require("./api/middleware/forceSSL");
 
 const port = parseInt(process.env.PORT, 10) || 3000;
 
-const server = express();
+app.use(cors());
+app.use(forceSSL);
+app.use(cookieParser());
+app.use(express.json());
 
-server.use(cors());
-server.use(forceSSL);
-server.use(cookieParser());
-server.use(express.json());
+app.use("/", apiRoutes);
 
-server.use("/", apiRoutes);
-
-server.use(errorHandler);
+app.use(errorHandler);
 
 server.listen(port, err => {
   if (err) throw err;

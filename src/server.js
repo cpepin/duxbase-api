@@ -1,7 +1,9 @@
 const express = require("express");
 const app = express();
-const server = require("http").Server(app);
-const io = require("socket.io")(server);
+const httpServer = require("http").Server(app);
+const httpsServer = require("https").Server(app);
+const httpIo = require("socket.io")(httpServer);
+const httpsIo = require("socket.io")(httpsServer);
 
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -12,7 +14,8 @@ const apiRoutes = require("./api/routes");
 const errorHandler = require("./api/middleware/errorHandler");
 const forceSSL = require("./api/middleware/forceSSL");
 
-const port = parseInt(process.env.PORT, 10) || 3000;
+const httpPort = parseInt(process.env.PORT, 10) || 3000;
+const httpsPort = 443;
 
 app.use(cors());
 app.use(forceSSL);
@@ -23,7 +26,12 @@ app.use("/", apiRoutes);
 
 app.use(errorHandler);
 
-server.listen(port, err => {
+httpServer.listen(httpPort, err => {
   if (err) throw err;
-  console.log(`> Ready on http://localhost:${port}`);
+  console.log(`> HTTP Ready on port ${httpPort}`);
+});
+
+httpsServer.listen(httpsPort, err => {
+  if (err) throw err;
+  console.log(`> HTTPS Ready on port ${httpsPort}`);
 });

@@ -9,6 +9,8 @@ const apiRoutes = require("./api/routes");
 const errorHandler = require("./api/middleware/errorHandler");
 const forceSSL = require("./api/middleware/forceSSL");
 
+const { initialize } = require("./api/services/notificationBroker");
+
 const port = parseInt(process.env.PORT, 10) || 3000;
 
 const app = express();
@@ -28,3 +30,4 @@ const server = app.listen(port, err => {
 });
 
 const io = socketIo(server);
+initialize(io);
